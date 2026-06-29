@@ -1,13 +1,61 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import 'tailwindcss';
+
+/* Retro-arcade design tokens — Tailwind v4 reads these to generate utilities
+   (e.g. --color-accent -> bg-accent/text-accent, --font-pixel -> font-pixel). */
+@theme {
+  --color-bg: #0c0c10;
+  --color-surface: #14141c;
+  --color-surface-2: #1c1c28;
+  --color-border: #2a2a3a;
+  --color-muted: #8b8b9e;
+  --color-fg: #e7e7ef;
+
+  --color-accent: #f5d90a;
+  --color-accent-2: #22d3ee;
+
+  --color-win: #3ddc97;
+  --color-lose: #ff5d5d;
+  --color-draw: #9aa0aa;
+
+  --color-rock: #f59e0b;
+  --color-paper: #38bdf8;
+  --color-scissors: #f472b6;
+
+  --font-pixel: 'VT323', ui-monospace, monospace;
+
+  --shadow-glow: 0 0 0 1px rgba(245, 217, 10, 0.4), 0 0 24px -4px rgba(245, 217, 10, 0.35);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-pixel);
+    -webkit-font-smoothing: antialiased;
+    /* Subtle CRT scanline + vignette */
+    background-image:
+      radial-gradient(120% 120% at 50% 0%, rgba(34, 211, 238, 0.06), transparent 60%),
+      repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.015) 0px,
+        rgba(255, 255, 255, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+  }
+
+  #root {
+    min-height: 100dvh;
+  }
+}
+
+/* Mirror the webcam feed + landmark canvas so it reads like a mirror. */
+.mirror {
+  transform: scaleX(-1);
 }

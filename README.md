@@ -1,70 +1,63 @@
-# Getting Started with Create React App
+# Rock · Paper · Scissors — v2 (Gesture Edition)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Play Rock Paper Scissors against a smart CPU using **hand gestures via your webcam**.
+Hold a gesture steady to lock it in, and the CPU reveals its move. No camera? Play
+with on-screen buttons or the **R / P / S** keys.
 
-## Available Scripts
+> v2 is a ground-up rewrite of a 4-year-old Create React App project — now on
+> **Vite + React 19 + TypeScript**, with modern hand detection, a real game state
+> machine, persisted stats, sound, animations, and offline PWA support.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- 🖐️ **Gesture input** via MediaPipe `GestureRecognizer` (21-point hand landmarks
+  drawn live as a skeleton overlay).
+- ⏱️ **Hold-to-confirm** — hold a gesture for ~0.8s to commit it; a ring shows progress.
+- 🤖 **Difficulty levels** — Easy (random), Medium (counters your favourite move),
+  Hard (order-2 Markov prediction of your next move).
+- ⌨️ **Full keyboard / button fallback** — playable without a camera.
+- 📊 **Persisted stats** — win rate, streaks, per-move usage (localStorage).
+- 🔊 **Synthesized sound** (Web Audio — no audio files) and animated reveals.
+- 📱 **Installable PWA**, responsive, works offline after first load.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Getting started
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm install      # also fetches the MediaPipe model + wasm (see below)
+npm run dev      # http://localhost:5173
+```
 
-### `npm test`
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Vite dev server |
+| `npm run build` | Type-check + production build to `dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm test` | Run the Vitest unit/integration suite |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier |
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> **Camera note:** `getUserMedia` requires a secure context — `localhost` and HTTPS
+> work; plain-HTTP LAN IPs do not.
 
-### `npm run build`
+## How detection works
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The app uses MediaPipe's `GestureRecognizer` (`@mediapipe/tasks-vision`), whose
+built-in categories map directly to moves — `Closed_Fist → rock`,
+`Open_Palm → paper`, `Victory → scissors`. When the built-in label is weak, a small
+finger-extension heuristic over the raw landmarks (`src/game/gestures.ts`) takes over.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+The model and WASM runtime are **self-hosted** under `public/models/` rather than
+loaded from a CDN. They're large (~20 MB total), so they are **not committed** —
+`scripts/setup-models.mjs` provisions them on `postinstall` and before `build`
+(copying the wasm from `node_modules`, downloading the `.task` model once).
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Deploy (Netlify)
 
-### `npm run eject`
+`netlify.toml` is preconfigured: build `npm run build`, publish `dist`, SPA
+redirect, and an immutable cache header for `/models/*`. `npm install` runs the
+model setup automatically, so a connected repo deploys as-is.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Tech stack
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Vite 8 · React 19 · TypeScript · Tailwind CSS v4 · Zustand · Framer Motion ·
+`@mediapipe/tasks-vision` · `vite-plugin-pwa` · Vitest.

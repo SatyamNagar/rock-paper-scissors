@@ -1,18 +1,25 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.js
 
 # testing
 /coverage
 
-# production
+# build output
+dist
+dist-ssr
 /build
+*.local
+
+# generated at install/build time (see scripts/setup-models.mjs)
+public/models
 
 # misc
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
@@ -21,3 +28,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+
+# editor / os
+.idea
+*.sw?
